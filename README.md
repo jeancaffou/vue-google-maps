@@ -23,6 +23,14 @@ The above three will go a long way to keeping the project maintainable and contr
 
 This is the Vue 2.x port of vue-google-maps!
 
+## Attention!
+
+This great package doesn't release the last features added to it for different reasons, is because it that some developers land a new package with the last features added to it.
+
+If you want to use the last features in this package you can use [gmap-vue](https://www.npmjs.com/package/gmap-vue), it is a fork of this repository and has all new fixes and features added to it.
+
+This new package has new documentation with live examples that can you test with your own gmap key. You can visit it following this link [gmap-vue docs](https://diegoazh.github.io/gmap-vue/).
+
 ## Installation
 
 ### With npm (Recommended)
@@ -150,7 +158,7 @@ Example of [MapOptions](https://developers.google.com/maps/documentation/javascr
     streetViewControl: false,
     rotateControl: false,
     fullscreenControl: true,
-    disableDefaultUi: false
+    disableDefaultUI: false
   }"
 >
 </GmapMap>
@@ -205,6 +213,33 @@ Vue.component('GmapCluster', GmapCluster)
 ```
 Inconvenient, but this means all other users don't have to bundle the marker clusterer package
 in their source code.
+
+### Autocomplete component
+The autocomplete supports custom text field via scoped slot
+
+```html
+          <gmap-autocomplete class="introInput" >
+                    <template v-slot:input="slotProps">
+                        <v-text-field outlined
+                                      prepend-inner-icon="place"
+                                      placeholder="Location Of Event"
+                                      ref="input"
+                                      v-on:listeners="slotProps.listeners"
+                                      v-on:attrs="slotProps.attrs">
+                        </v-text-field>
+                    </template>
+        </gmap-autocomplete>
+```
+
+The ref on the element must be called input, if the element is a vue component then it must have a child ref called input (like in vuetify text-field) or speciy a custom name via childRefName property (only works one level deep into a component).
+
+The v-on:listeners is rquired, v-on:attrs may or may not be required depending on your implementation.
+
+This requires vue 2.6 or higher for the new slot support.
+
+**NOTE: The official NPM package does not support this until the NPM package is updated, you can use this alternate temporary one or build your own version from source.**
+
+https://www.npmjs.com/package/vue2-google-maps-withscopedautocomp
 
 ### Adding your own components
 

@@ -1,6 +1,6 @@
-import { bindProps, getPropsValues } from '../utils/bindProps.js'
-import downArrowSimulator from '../utils/simulateArrowDown.js'
-import { mappedPropsToVueProps } from './mapElementFactory'
+import { bindProps, getPropsValues } from '../utils/bind-props'
+import downArrowSimulator from '../utils/simulate-arrow-down'
+import mappedPropsToVueProps from '../utils/mapped-props-to-vue-props'
 
 const mappedProps = {
   bounds: {
@@ -26,14 +26,33 @@ const props = {
     type: Boolean,
     default: false
   },
+  // the name of the ref to obtain the input (if its a child  of component in the slot)
+  childRefName: {
+    required: false,
+    type: String,
+    default: 'input'
+  },
   options: {
     type: Object
+  },
+  fields: {
+    required: false,
+    type: Array,
+    default: null
   }
 }
 
 export default {
   mounted () {
     this.$gmapApiPromiseLazy().then(() => {
+      var scopedInput = null
+      if (this.$scopedSlots.input) {
+        scopedInput = this.$scopedSlots.input()[0].context.$refs.input
+        if (scopedInput && scopedInput.$refs) {
+          scopedInput = scopedInput.$refs[this.childRefName || 'input']
+        }
+        if (scopedInput) { this.$refs.input = scopedInput }
+      }
       if (this.selectFirstOnEnter) {
         downArrowSimulator(this.$refs.input)
       }
@@ -56,6 +75,12 @@ export default {
           this.$autocomplete.setComponentRestrictions(v)
         }
       })
+
+      // IMPORTANT: To avoid paying for data that you don't need,
+      // be sure to use Autocomplete.setFields() to specify only the place data that you will use.
+      if (this.fields) {
+        this.$autocomplete.setFields(this.fields)
+      }
 
       // Not using `bindEvents` because we also want
       // to return the result of `getPlace()`
